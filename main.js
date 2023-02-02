@@ -11,7 +11,7 @@ var app = http.createServer(function(request,response){
         fs.readFile(`data/${queryData.id}`,'utf-8',function(err,description){
             if(!description){
                 title = 'Welcome';
-                description = fs.readFileSync(`data/Welcome`,'utf-8');
+                description = fs.readFileSync(`Welcome`,'utf-8');
             }
             var template = `
             <!DOCTYPE html>
