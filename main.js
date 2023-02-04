@@ -8,33 +8,70 @@ var app = http.createServer(function(request,response){
     var title = queryData.id;
 
     if(pathname === '/'){
-        fs.readFile(`data/${queryData.id}`,'utf-8',function(err,description){
-            if(!description){
+        if(queryData.id === undefined){
+            fs.readdir('./data',function(err,filelist){
                 title = 'Welcome';
                 description = fs.readFileSync(`Welcome`,'utf-8');
-            }
-            var template = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>WEB1 - ${title}</title>
-                <meta charset="utf-8">
-            </head>
-            <body>
-                <h1><a href="/">WEB</a></h1>
-                <ol>
-                    <li><a href="/?id=HTML">HTML</a></li>
-                    <li><a href="/?id=CSS">CSS</a></li>
-                    <li><a href="/?id=JavaScript">Javascript</a></li>
-                </ol>
-                <h2>${title}</h2>
-                <p>${description}</p>
-            </body>
-            </html> 
-            `;
-            response.writeHead(200);
-            response.end(template);
-        })
+                var list = '<ul>';
+
+                var i=0;
+                while(i < filelist.length){
+                    list += `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+                    i++;
+                }
+    
+                list = list + '</ul>'
+                var template = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>WEB1 - ${title}</title>
+                    <meta charset="utf-8">
+                </head>
+                <body>
+                    <h1><a href="/">WEB</a></h1>
+                    ${list}
+                    <h2>${title}</h2>
+                    <p>${description}</p>
+                </body>
+                </html>`;
+                response.writeHead(200);
+                response.end(template);
+            })
+        }
+        else{
+            fs.readdir('./data',function(err,filelist){
+                title = 'Welcome';
+                description = fs.readFileSync(`Welcome`,'utf-8');
+                var list = '<ul>';
+                var i=0;
+                while(i < filelist.length){
+                    list += `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+                    i++;
+                }
+                list = list + '</ul>'
+                fs.readFile(`./data/${queryData.id}`,'utf-8',function(err,description){
+                    title = queryData.id;
+                    var template = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>WEB1 - ${title}</title>
+                        <meta charset="utf-8">
+                    </head>
+                    <body>
+                        <h1><a href="/">WEB</a></h1>
+                        ${list}
+                        <h2>${title}</h2>
+                        <p>${description}</p>
+                    </body>
+                    </html> 
+                    `;
+                    response.writeHead(200);
+                    response.end(template);
+                });
+            });
+        }
     } else{
         response.writeHead(404);
         response.end('Not found');
